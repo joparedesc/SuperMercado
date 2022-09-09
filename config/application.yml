@@ -1,0 +1,63 @@
+#Paths of controller
+controller:
+  base-path: /miempresa/compras/
+  api-get-catalog-products: catalog/product
+  api-add-product-carrito-compras: add/product/compra
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+product-catalog:
+  product:
+    -
+      id: 1
+      nombre: Leche
+      descripcion: Producto lacteo de vaca
+      precio: 20.5
+    -
+      id: 2
+      nombre: Pan Bimbo
+      descripcion: Pan para sandwich
+      precio: 46.2
+    -
+      id: 3
+      nombre: Huevos
+      descripcion: Producto de gallina
+      precio: 47
+    -
+      id: 4
+      nombre: Azucar
+      descripcion: Producto endulzante
+      precio: 27
+    -
+      id:  5
+      nombre: Sal
+      descripcion: Producto para saborizar
+      precio: 26.1
+    -
+      id:  6
+      nombre: Mermelada
+      descripcion: Producto de fresa
+      precio: 23
+    -
+      id:  7
+      nombre: Cajeta
+      descripcion: Producto para hotcake
+      precio: 18
+    -
+      id:  8
+      nombre: Aceite
+      descripcion: Producto de aceite vegetal
+      precio: 49
+    -
+      id:  9
+      nombre: Servilletas
+      descripcion: Producto de limpieza
+      precio: 25
+    -
+      id:  10
+      nombre: Cafe
+      descripcion:
+      Cafe soluble precio: 76
