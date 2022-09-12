@@ -34,7 +34,7 @@ public class ProductCatalogConfig {
 
         private String descripcion;
 
-        private float precio;
+        private double precio;
 
         @Override
         public String toString(){

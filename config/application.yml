@@ -2,13 +2,22 @@
 controller:
   base-path: /miempresa/compras/
   api-get-catalog-products: catalog/product
-  api-add-product-carrito-compras: add/product/compra
+  api-add-product-shopping-cart: add/product/shopping/cart
+  api-get-shopping-cart-by-user: shopping/cart/byUser
+  api-get-catalog-products-map-by-id: catalog/product/mapById
+  api-get-catalog-products-map-by-name: catalog/product/mapByName
 
+#Valid headers apis
+headers:
+  id-user: x-id-usuario
+
+#Swagger Config
 spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+#Catalog products
 product-catalog:
   product:
     -
@@ -59,5 +68,5 @@ product-catalog:
     -
       id:  10
       nombre: Cafe
-      descripcion:
+      descripcion: Producto soluble
       Cafe soluble precio: 76

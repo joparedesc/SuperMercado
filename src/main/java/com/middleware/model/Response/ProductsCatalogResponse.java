@@ -1,4 +1,4 @@
-package com.middleware.model;
+package com.middleware.model.Response;
 
 import com.middleware.config.ProductCatalogConfig;
 import lombok.AllArgsConstructor;
