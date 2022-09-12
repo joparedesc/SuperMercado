@@ -25,6 +25,15 @@ public class LogConstants {
     /** Finish get shopping cart by user id log. */
     public static final String FINISH_APPLICATION_GET_SHOPPING_CART_BY_USER_ID="************** FINISH APPLICATION GET-SHOPPING-CART BY USER-ID {}  **************";
 
-    /** Error add product to shopping cart log*/
+    /** Error added product to shopping cart log*/
     public static final String SOMETHING_WENT_WRONG_WHILE_ADD_PRODUCT_TO_SHOPPING_CART="SOMETHING WENT WRONG WHILE ADD-PRODUCT-TO-SHOPPING-CART BY USER-ID {} : {} ";
+
+    /** Start delete product shopping cart log. */
+    public static final String START_APPLICATION_DELETE_PRODUCT_SHOPPING_CART="************** START APPLICATION DELETE-PRODUCT-SHOPPING-CART TO ID USER {}  **************";
+
+    /** Finish delete product shopping cart log. */
+    public static final String FINISH_APPLICATION_DELETE_PRODUCT_SHOPPING_CART="************** FINISH APPLICATION DELETE-PRODUCT-SHOPPING-CART TO ID USER {}  **************";
+
+    /** Error deleted product to shopping cart log*/
+    public static final String SOMETHING_WENT_WRONG_WHILE_DELETE_PRODUCT_TO_SHOPPING_CART="SOMETHING WENT WRONG WHILE DELETE-PRODUCT-TO-SHOPPING-CART BY USER-ID {} : {} ";
 }

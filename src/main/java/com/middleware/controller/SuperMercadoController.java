@@ -2,6 +2,7 @@ package com.middleware.controller;
 
 import com.middleware.config.ProductCatalogConfig;
 import com.middleware.constants.LogConstants;
+import com.middleware.model.Request.DeleteProductOfShoppingCartRequest;
 import com.middleware.model.Request.UserShoppingCartRequest;
 import com.middleware.model.Response.ProductsCatalogResponse;
 import com.middleware.model.ShoppingCart;
@@ -76,7 +77,13 @@ public class SuperMercadoController {
         return new ResponseEntity<Map<String,ProductCatalogConfig.Product>>(productMap, HttpStatus.OK);
     }
 
-
+    /**
+     * AddProductShoppingCart method.
+     * Method to add product to shopping cart of a user.
+     * @param idUser id user.
+     * @param userShoppingCartRequest request user shopping cart.
+     * @return ResponseEntity<ShoppingCart>
+     */
     @PostMapping(
             path = "${controller.api-add-product-shopping-cart}",
             produces = "application/json",
@@ -86,9 +93,9 @@ public class SuperMercadoController {
     public ResponseEntity<ShoppingCart> addProductShoppingCart(
             @Valid @RequestBody UserShoppingCartRequest userShoppingCartRequest,
             @RequestHeader(value="${headers.id-user}") int idUser) {
-        log.info(LogConstants.START_APPLICATION_ADD_PRODUCT_SHOPPING_CART);
+        log.info(LogConstants.START_APPLICATION_ADD_PRODUCT_SHOPPING_CART,idUser);
         ShoppingCart shoppingCart = shoppingService.addProductToShoppingCart(idUser,userShoppingCartRequest);
-        log.info(LogConstants.FINISH_APPLICATION_ADD_PRODUCT_SHOPPING_CART);
+        log.info(LogConstants.FINISH_APPLICATION_ADD_PRODUCT_SHOPPING_CART,idUser);
         return new ResponseEntity(shoppingCart, HttpStatus.OK); // you can change status code based on response
     }
 
@@ -110,6 +117,28 @@ public class SuperMercadoController {
         log.debug(LogConstants.FINISH_APPLICATION_GET_SHOPPING_CART_BY_USER_ID,idUser);
 
         return new ResponseEntity<ShoppingCart>(shoppingCart, HttpStatus.OK);
+    }
+
+    /**
+     * DeleteProductShoppingCart method.
+     * Method to add product to shopping cart of a user.
+     * @param idUser id user.
+     * @param deleteProductOfShoppingCartRequest request user shopping cart.
+     * @return ResponseEntity<ShoppingCart>
+     */
+    @DeleteMapping(
+            path = "${controller.api-delete-product-shopping-cart}",
+            produces = "application/json",
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    @ResponseBody
+    public ResponseEntity<ShoppingCart> deleteProductShoppingCart(
+            @Valid @RequestBody DeleteProductOfShoppingCartRequest deleteProductOfShoppingCartRequest,
+            @RequestHeader(value="${headers.id-user}") int idUser) {
+        log.info(LogConstants.START_APPLICATION_DELETE_PRODUCT_SHOPPING_CART,idUser);
+        ShoppingCart shoppingCart = shoppingService.deleteProductToShoppingCart(idUser,deleteProductOfShoppingCartRequest);
+        log.info(LogConstants.FINISH_APPLICATION_DELETE_PRODUCT_SHOPPING_CART,idUser);
+        return new ResponseEntity(shoppingCart, HttpStatus.OK); // you can change status code based on response
     }
 
 
