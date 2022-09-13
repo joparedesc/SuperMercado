@@ -96,7 +96,7 @@ public class SuperMercadoController {
         log.info(LogConstants.START_APPLICATION_ADD_PRODUCT_SHOPPING_CART,idUser);
         ShoppingCart shoppingCart = shoppingService.addProductToShoppingCart(idUser,userShoppingCartRequest);
         log.info(LogConstants.FINISH_APPLICATION_ADD_PRODUCT_SHOPPING_CART,idUser);
-        return new ResponseEntity(shoppingCart, HttpStatus.OK); // you can change status code based on response
+        return new ResponseEntity(shoppingCart, HttpStatus.OK);
     }
 
     /**
@@ -138,7 +138,29 @@ public class SuperMercadoController {
         log.info(LogConstants.START_APPLICATION_DELETE_PRODUCT_SHOPPING_CART,idUser);
         ShoppingCart shoppingCart = shoppingService.deleteProductToShoppingCart(idUser,deleteProductOfShoppingCartRequest);
         log.info(LogConstants.FINISH_APPLICATION_DELETE_PRODUCT_SHOPPING_CART,idUser);
-        return new ResponseEntity(shoppingCart, HttpStatus.OK); // you can change status code based on response
+        return new ResponseEntity(shoppingCart, HttpStatus.OK);
+    }
+
+    /**
+     * UpdateQuantityOfProductOfShoppingCart method.
+     * Method to update quantity of product into shopping cart of a user.
+     * @param idUser id user.
+     * @param userShoppingCartRequest request user shopping cart.
+     * @return ResponseEntity<ShoppingCart>
+     */
+    @PutMapping(
+            path = "${controller.api-update-quantity-product-shopping-cart}",
+            produces = "application/json",
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    @ResponseBody
+    public ResponseEntity<ShoppingCart> updateQuantityOfProductOfShoppingCart(
+            @Valid @RequestBody UserShoppingCartRequest userShoppingCartRequest,
+            @RequestHeader(value="${headers.id-user}") int idUser) {
+        log.info(LogConstants.START_APPLICATION_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART,idUser);
+        ShoppingCart shoppingCart = shoppingService.updateQuantityOfProductOfShoppingCart(idUser,userShoppingCartRequest);
+        log.info(LogConstants.FINISH_APPLICATION_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART,idUser);
+        return new ResponseEntity(shoppingCart, HttpStatus.OK);
     }
 
 

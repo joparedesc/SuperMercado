@@ -5,6 +5,7 @@ controller:
   api-add-product-shopping-cart: add/product/shopping/cart
   api-get-shopping-cart-by-user: shopping/cart/byUser
   api-delete-product-shopping-cart: delete/product/shopping/cart
+  api-update-quantity-product-shopping-cart: update/quantity/product/shopping/cart
   api-get-catalog-products-map-by-id: catalog/product/mapById
   api-get-catalog-products-map-by-name: catalog/product/mapByName
 

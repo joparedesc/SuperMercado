@@ -11,11 +11,17 @@ public interface ShoppingService {
 
     Map<Integer, ShoppingCart> initialShoppingCart();
 
-    ShoppingCart addProductToShoppingCart(int idUser, UserShoppingCartRequest userShoppingCartRequest);
+    ShoppingCart addProductToShoppingCart(
+            int idUser, UserShoppingCartRequest userShoppingCartRequest);
 
-    Map<Integer, ShoppingCart> addProductToShoppingCartMap(String idUser, UserShoppingCartRequest userShoppingCartRequest);
+    Map<Integer, ShoppingCart> addProductToShoppingCartMap(
+            String idUser, UserShoppingCartRequest userShoppingCartRequest);
 
-    ShoppingCart deleteProductToShoppingCart(int idUser, DeleteProductOfShoppingCartRequest deleteProductOfShoppingCartRequest);
+    ShoppingCart deleteProductToShoppingCart(
+            int idUser, DeleteProductOfShoppingCartRequest deleteProductOfShoppingCartRequest);
 
     ShoppingCart getShoppingCartUserById(int idUser);
+
+    ShoppingCart updateQuantityOfProductOfShoppingCart(
+            int idUser, UserShoppingCartRequest userShoppingCartRequest);
 }

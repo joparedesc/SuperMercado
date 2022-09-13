@@ -34,6 +34,15 @@ public class LogConstants {
     /** Finish delete product shopping cart log. */
     public static final String FINISH_APPLICATION_DELETE_PRODUCT_SHOPPING_CART="************** FINISH APPLICATION DELETE-PRODUCT-SHOPPING-CART TO ID USER {}  **************";
 
-    /** Error deleted product to shopping cart log*/
+    /** Error deleted product to shopping cart log. */
     public static final String SOMETHING_WENT_WRONG_WHILE_DELETE_PRODUCT_TO_SHOPPING_CART="SOMETHING WENT WRONG WHILE DELETE-PRODUCT-TO-SHOPPING-CART BY USER-ID {} : {} ";
+
+    /** Start update quantity of product of a shopping cart log. */
+    public static final String START_APPLICATION_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART="************** START APPLICATION UPDATE-QUANTITY-OF-PRODUCT-OF-SHOPPING-CART TO ID USER {}  **************";
+
+    /** Finish update quantity of product of a shopping cart log. */
+    public static final String FINISH_APPLICATION_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART="************** FINISH APPLICATION UPDATE-QUANTITY-OF-PRODUCT-OF-SHOPPING-CART TO ID USER {}  **************";
+
+    /** Error update quantity of product of a shopping cart log*/
+    public static final String SOMETHING_WENT_WRONG_WHILE_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART="SOMETHING WENT WRONG WHILE UPDATE-QUANTITY-OF-PRODUCT-OF-SHOPPING-CART BY USER-ID {} : {} ";
 }

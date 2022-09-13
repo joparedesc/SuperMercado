@@ -104,32 +104,48 @@ public class ShoppingServiceImplementation implements ShoppingService {
 
                     //Product by id
                     if(productsCatalogMapByIdProduct.containsKey(userShoppingCartRequest.getIdProduct())){
-                        shoppingCart.getDetailShoppingCart().add
-                                (
-                                        new DetailShoppingCart(
-                                                maxIdDetailShoppingCart,
-                                                productsCatalogMapByIdProduct.get(
-                                                        userShoppingCartRequest.getIdProduct()),
-                                                userShoppingCartRequest.getProductQuantity(),
-                                                productsCatalogMapByIdProduct.get(
-                                                        userShoppingCartRequest.getIdProduct())
-                                                        .getPrecio()*userShoppingCartRequest.getProductQuantity()
-                                        )
-                                );
+
+                        //if Product Quantity>0
+                        if(userShoppingCartRequest.getProductQuantity()>0){
+                            shoppingCart.getDetailShoppingCart().add
+                                    (
+                                            new DetailShoppingCart(
+                                                    maxIdDetailShoppingCart,
+                                                    productsCatalogMapByIdProduct.get(
+                                                            userShoppingCartRequest.getIdProduct()),
+                                                    userShoppingCartRequest.getProductQuantity(),
+                                                    productsCatalogMapByIdProduct.get(
+                                                                    userShoppingCartRequest.getIdProduct())
+                                                            .getPrecio()*userShoppingCartRequest.getProductQuantity()
+                                            )
+                                    );
+                        }else{
+                            throw new RuntimeException(
+                                    String.format("Product quantity [%d] is not greater than zero.", userShoppingCartRequest.getProductQuantity())
+                            );
+                        }
+
                     }else{
                         //Product by name
-                        shoppingCart.getDetailShoppingCart().add
-                                (
-                                        new DetailShoppingCart(
-                                                maxIdDetailShoppingCart,
-                                                productsCatalogMapByNameProduct.get(
-                                                        userShoppingCartRequest.getNameProduct()),
-                                                userShoppingCartRequest.getProductQuantity(),
-                                                productsCatalogMapByNameProduct.get(
-                                                        userShoppingCartRequest.getNameProduct())
-                                                        .getPrecio()*userShoppingCartRequest.getProductQuantity()
-                                        )
-                                );
+                        if(userShoppingCartRequest.getProductQuantity()>0){
+                            shoppingCart.getDetailShoppingCart().add
+                                    (
+                                            new DetailShoppingCart(
+                                                    maxIdDetailShoppingCart,
+                                                    productsCatalogMapByNameProduct.get(
+                                                            userShoppingCartRequest.getNameProduct()),
+                                                    userShoppingCartRequest.getProductQuantity(),
+                                                    productsCatalogMapByNameProduct.get(
+                                                                    userShoppingCartRequest.getNameProduct())
+                                                            .getPrecio()*userShoppingCartRequest.getProductQuantity()
+                                            )
+                                    );
+                        }else{
+                            throw new RuntimeException(
+                                    String.format("Product quantity [%d] is not greater than zero.", userShoppingCartRequest.getProductQuantity())
+                            );
+                        }
+
                     }
                     shoppingCart.setTotalAmount(
                             shoppingCart.getDetailShoppingCart().stream().mapToDouble(
@@ -245,6 +261,135 @@ public class ShoppingServiceImplementation implements ShoppingService {
             return shoppingCart;
         }catch (RuntimeException exception){
             log.error(LogConstants.SOMETHING_WENT_WRONG_WHILE_DELETE_PRODUCT_TO_SHOPPING_CART,
+                    idUser,exception.getMessage());
+            throw new RuntimeException(exception);
+        }
+    }
+
+    public ShoppingCart updateQuantityOfProductOfShoppingCart(
+            int idUser,
+            UserShoppingCartRequest userShoppingCartRequest){
+
+        try{
+            ShoppingCart shoppingCart= new ShoppingCart();
+            if(initialShoppingCart().containsKey(idUser)){
+                shoppingCart= initialShoppingCart().get(idUser);
+
+                //Initial products catalog by id product
+                Map<Integer, ProductCatalogConfig.Product> productsCatalogMapByIdProduct =
+                        productService.getProductsCatalogMapByIdProduct();
+                //Initial products catalog by name product
+                Map<String, ProductCatalogConfig.Product> productsCatalogMapByNameProduct =
+                        productService.getProductsCatalogMapByNameProduct();
+
+                //If the product catalog not contains the product by id or name
+                if (!productsCatalogMapByIdProduct.containsKey(
+                        userShoppingCartRequest.getIdProduct())
+                        && !productsCatalogMapByNameProduct.containsKey(
+                        userShoppingCartRequest.getNameProduct())) {
+                    String messageException=
+                            "Product is not present with id product : "+
+                                    userShoppingCartRequest.getIdProduct()+
+                                    " or with name product :  "+
+                                    userShoppingCartRequest.getNameProduct()+
+                            " into shopping cart.";
+                    throw new RuntimeException(
+                            messageException
+                    );
+                } else {
+
+                    //Product by id
+                    if(productsCatalogMapByIdProduct.containsKey(
+                            userShoppingCartRequest.getIdProduct())){
+
+                        Optional<DetailShoppingCart> detailShoppingCartOptional = shoppingCart.getDetailShoppingCart().stream()
+                                .filter( productShopping-> productShopping.getProduct().getId()==userShoppingCartRequest.getIdProduct())
+                                .findFirst();
+
+
+                        if(detailShoppingCartOptional.isPresent()){
+                            //if Product Quantity>0
+                            if(userShoppingCartRequest.getProductQuantity()>0){
+                                //Update of Product Quantity
+                                detailShoppingCartOptional.get().setProductQuantity(userShoppingCartRequest.getProductQuantity());
+                                //Update total amount for product
+                                detailShoppingCartOptional.get().setTotalAmount(
+                                        detailShoppingCartOptional.get().getProductQuantity()*
+                                                detailShoppingCartOptional.get().getProduct().getPrecio());
+                            }else{
+                                throw new RuntimeException(
+                                        String.format("Product quantity [%d] is not greater than zero.", userShoppingCartRequest.getProductQuantity())
+                                );
+                            }
+                            //detail Shopping cart
+                            List<DetailShoppingCart> detailShoppingCartNew = shoppingCart.getDetailShoppingCart().stream()
+                                    .filter(productShopping->(productShopping.getProduct().getId())!=userShoppingCartRequest.getIdProduct())
+                                    .collect(Collectors.toList());
+
+                            detailShoppingCartNew.add(detailShoppingCartOptional.get());
+
+                            shoppingCart.setDetailShoppingCart(detailShoppingCartNew);
+                        }else {
+                            throw new RuntimeException(
+                                    String.format("Product id [%d] is not present into shopping cart of user.", userShoppingCartRequest.getIdProduct())
+                            );
+                        }
+
+                    }else{
+                        //Product by name
+                        Optional<DetailShoppingCart> detailShoppingCartOptional = shoppingCart.getDetailShoppingCart().stream()
+                                .filter( productShopping-> productShopping.getProduct().getNombre().equals(userShoppingCartRequest.getNameProduct()))
+                                .findFirst();
+
+                        if(detailShoppingCartOptional.isPresent()){
+                            //if Product Quantity>0
+                            if(userShoppingCartRequest.getProductQuantity()>0){
+                                //Update of Product Quantity
+                                detailShoppingCartOptional.get().setProductQuantity(
+                                        userShoppingCartRequest.getProductQuantity());
+                                //Update total amount for product
+                                detailShoppingCartOptional.get().setTotalAmount(
+                                        detailShoppingCartOptional.get().getProductQuantity()*
+                                                detailShoppingCartOptional.get().getProduct().getPrecio());
+                            }else{
+                                throw new RuntimeException(
+                                        String.format("Product quantity [%d] is not greater than zero.",
+                                                userShoppingCartRequest.getProductQuantity())
+                                );
+                            }
+                            //detail Shopping cart
+                            List<DetailShoppingCart> detailShoppingCartNew =
+                                    shoppingCart.getDetailShoppingCart().stream()
+                                    .filter(productShopping->(!productShopping.getProduct().getNombre().equals(
+                                            userShoppingCartRequest.getNameProduct())))
+                                    .collect(Collectors.toList());
+
+                            detailShoppingCartNew.add(detailShoppingCartOptional.get());
+
+                            shoppingCart.setDetailShoppingCart(detailShoppingCartNew);
+                        }else {
+                            throw new RuntimeException(
+                                    String.format("Product name [%s] is not present into shopping cart of user.",
+                                            userShoppingCartRequest.getNameProduct())
+                            );
+                        }
+
+                    }
+
+                    shoppingCart.setTotalAmount(
+                            shoppingCart.getDetailShoppingCart().stream().mapToDouble(
+                                    DetailShoppingCart::getTotalAmount).sum()
+                    );
+
+                }
+            }else{
+                throw new RuntimeException(
+                        String.format("Shopping cart is not present with User id: [%d]", idUser)
+                );
+            }
+            return shoppingCart;
+        }catch (RuntimeException exception){
+            log.error(LogConstants.SOMETHING_WENT_WRONG_WHILE_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART,
                     idUser,exception.getMessage());
             throw new RuntimeException(exception);
         }
