@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
- * ProductCatalogConfig config class.
+ * ProductCatalogConfig class.
  * @author jesu_
  */
 @Getter

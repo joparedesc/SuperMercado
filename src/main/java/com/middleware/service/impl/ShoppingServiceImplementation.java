@@ -1,5 +1,6 @@
 package com.middleware.service.impl;
 
+import com.middleware.DAO.SaveProductDAO;
 import com.middleware.config.ProductCatalogConfig;
 import com.middleware.constants.LogConstants;
 import com.middleware.model.DetailShoppingCart;
@@ -23,6 +24,10 @@ public class ShoppingServiceImplementation implements ShoppingService {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    SaveProductDAO saveProductDAO;
+
 
     public Map<Integer,ShoppingCart> shoppingCartMap;
 
@@ -78,6 +83,8 @@ public class ShoppingServiceImplementation implements ShoppingService {
     public ShoppingCart addProductToShoppingCart(int idUser, UserShoppingCartRequest userShoppingCartRequest){
 
         try{
+            //Message sent async
+            saveProductDAO.sendMessageSaveProduct();
             ShoppingCart shoppingCart;
             if(initialShoppingCart().containsKey(idUser)){
                 shoppingCart= initialShoppingCart().get(idUser);
@@ -268,7 +275,9 @@ public class ShoppingServiceImplementation implements ShoppingService {
 
     public ShoppingCart updateQuantityOfProductOfShoppingCart(
             int idUser,
-            UserShoppingCartRequest userShoppingCartRequest){
+            int idProduct,
+            String nameProduct,
+            int productQuantity){
 
         try{
             ShoppingCart shoppingCart= new ShoppingCart();
@@ -284,14 +293,14 @@ public class ShoppingServiceImplementation implements ShoppingService {
 
                 //If the product catalog not contains the product by id or name
                 if (!productsCatalogMapByIdProduct.containsKey(
-                        userShoppingCartRequest.getIdProduct())
+                        idProduct)
                         && !productsCatalogMapByNameProduct.containsKey(
-                        userShoppingCartRequest.getNameProduct())) {
+                        nameProduct)) {
                     String messageException=
                             "Product is not present with id product : "+
-                                    userShoppingCartRequest.getIdProduct()+
+                                    idProduct+
                                     " or with name product :  "+
-                                    userShoppingCartRequest.getNameProduct()+
+                                    nameProduct+
                             " into shopping cart.";
                     throw new RuntimeException(
                             messageException
@@ -300,30 +309,30 @@ public class ShoppingServiceImplementation implements ShoppingService {
 
                     //Product by id
                     if(productsCatalogMapByIdProduct.containsKey(
-                            userShoppingCartRequest.getIdProduct())){
+                            idProduct)){
 
                         Optional<DetailShoppingCart> detailShoppingCartOptional = shoppingCart.getDetailShoppingCart().stream()
-                                .filter( productShopping-> productShopping.getProduct().getId()==userShoppingCartRequest.getIdProduct())
+                                .filter( productShopping-> productShopping.getProduct().getId()==idProduct)
                                 .findFirst();
 
 
                         if(detailShoppingCartOptional.isPresent()){
                             //if Product Quantity>0
-                            if(userShoppingCartRequest.getProductQuantity()>0){
+                            if(productQuantity>0){
                                 //Update of Product Quantity
-                                detailShoppingCartOptional.get().setProductQuantity(userShoppingCartRequest.getProductQuantity());
+                                detailShoppingCartOptional.get().setProductQuantity(productQuantity);
                                 //Update total amount for product
                                 detailShoppingCartOptional.get().setTotalAmount(
                                         detailShoppingCartOptional.get().getProductQuantity()*
                                                 detailShoppingCartOptional.get().getProduct().getPrecio());
                             }else{
                                 throw new RuntimeException(
-                                        String.format("Product quantity [%d] is not greater than zero.", userShoppingCartRequest.getProductQuantity())
+                                        String.format("Product quantity [%d] is not greater than zero.", productQuantity)
                                 );
                             }
                             //detail Shopping cart
                             List<DetailShoppingCart> detailShoppingCartNew = shoppingCart.getDetailShoppingCart().stream()
-                                    .filter(productShopping->(productShopping.getProduct().getId())!=userShoppingCartRequest.getIdProduct())
+                                    .filter(productShopping->(productShopping.getProduct().getId())!=idProduct)
                                     .collect(Collectors.toList());
 
                             detailShoppingCartNew.add(detailShoppingCartOptional.get());
@@ -331,22 +340,22 @@ public class ShoppingServiceImplementation implements ShoppingService {
                             shoppingCart.setDetailShoppingCart(detailShoppingCartNew);
                         }else {
                             throw new RuntimeException(
-                                    String.format("Product id [%d] is not present into shopping cart of user.", userShoppingCartRequest.getIdProduct())
+                                    String.format("Product id [%d] is not present into shopping cart of user.", idProduct)
                             );
                         }
 
                     }else{
                         //Product by name
                         Optional<DetailShoppingCart> detailShoppingCartOptional = shoppingCart.getDetailShoppingCart().stream()
-                                .filter( productShopping-> productShopping.getProduct().getNombre().equals(userShoppingCartRequest.getNameProduct()))
+                                .filter( productShopping-> productShopping.getProduct().getNombre().equals(nameProduct))
                                 .findFirst();
 
                         if(detailShoppingCartOptional.isPresent()){
                             //if Product Quantity>0
-                            if(userShoppingCartRequest.getProductQuantity()>0){
+                            if(productQuantity>0){
                                 //Update of Product Quantity
                                 detailShoppingCartOptional.get().setProductQuantity(
-                                        userShoppingCartRequest.getProductQuantity());
+                                        productQuantity);
                                 //Update total amount for product
                                 detailShoppingCartOptional.get().setTotalAmount(
                                         detailShoppingCartOptional.get().getProductQuantity()*
@@ -354,14 +363,14 @@ public class ShoppingServiceImplementation implements ShoppingService {
                             }else{
                                 throw new RuntimeException(
                                         String.format("Product quantity [%d] is not greater than zero.",
-                                                userShoppingCartRequest.getProductQuantity())
+                                                productQuantity)
                                 );
                             }
                             //detail Shopping cart
                             List<DetailShoppingCart> detailShoppingCartNew =
                                     shoppingCart.getDetailShoppingCart().stream()
                                     .filter(productShopping->(!productShopping.getProduct().getNombre().equals(
-                                            userShoppingCartRequest.getNameProduct())))
+                                            nameProduct)))
                                     .collect(Collectors.toList());
 
                             detailShoppingCartNew.add(detailShoppingCartOptional.get());
@@ -370,7 +379,7 @@ public class ShoppingServiceImplementation implements ShoppingService {
                         }else {
                             throw new RuntimeException(
                                     String.format("Product name [%s] is not present into shopping cart of user.",
-                                            userShoppingCartRequest.getNameProduct())
+                                            nameProduct)
                             );
                         }
 

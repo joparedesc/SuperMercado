@@ -1,11 +1,12 @@
 package com.middleware.controller;
 
-import com.middleware.config.ProductCatalogConfig;
 import com.middleware.constants.LogConstants;
 import com.middleware.model.Request.DeleteProductOfShoppingCartRequest;
 import com.middleware.model.Request.UserShoppingCartRequest;
 import com.middleware.model.Response.ProductsCatalogResponse;
+import com.middleware.model.Response.RestTemplateResponse;
 import com.middleware.model.ShoppingCart;
+import com.middleware.service.RestTemplateService;
 import com.middleware.service.ShoppingService;
 import com.middleware.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
+import java.util.List;
 
 
 
@@ -35,6 +36,9 @@ public class SuperMercadoController {
 
     @Autowired
     ShoppingService shoppingService;
+
+    @Autowired
+    RestTemplateService restTemplateService;
 
     /**
      * GetCatalogProducts method.
@@ -55,27 +59,6 @@ public class SuperMercadoController {
         return new ResponseEntity<ProductsCatalogResponse>(catalogoProducts, HttpStatus.OK);
     }
 
-    @GetMapping(
-            path = "${controller.api-get-catalog-products-map-by-id}",
-            produces = "application/json"
-    )
-    @ResponseBody
-    public ResponseEntity<Map<Integer, ProductCatalogConfig.Product>> getProductsCatalogMapByIdProduct() {
-        Map<Integer,ProductCatalogConfig.Product> productMap = productService.getProductsCatalogMapByIdProduct();
-
-        return new ResponseEntity<Map<Integer,ProductCatalogConfig.Product>>(productMap, HttpStatus.OK);
-    }
-
-    @GetMapping(
-            path = "${controller.api-get-catalog-products-map-by-name}",
-            produces = "application/json"
-    )
-    @ResponseBody
-    public ResponseEntity<Map<String, ProductCatalogConfig.Product>> getProductsCatalogMapByNameProduct() {
-        Map<String,ProductCatalogConfig.Product> productMap = productService.getProductsCatalogMapByNameProduct();
-
-        return new ResponseEntity<Map<String,ProductCatalogConfig.Product>>(productMap, HttpStatus.OK);
-    }
 
     /**
      * AddProductShoppingCart method.
@@ -145,22 +128,41 @@ public class SuperMercadoController {
      * UpdateQuantityOfProductOfShoppingCart method.
      * Method to update quantity of product into shopping cart of a user.
      * @param idUser id user.
-     * @param userShoppingCartRequest request user shopping cart.
+     * @param idProduct
+     * @param nameProduct
+     * @param productQuantity
      * @return ResponseEntity<ShoppingCart>
      */
     @PutMapping(
             path = "${controller.api-update-quantity-product-shopping-cart}",
-            produces = "application/json",
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
+            produces = "application/json"
     )
     @ResponseBody
     public ResponseEntity<ShoppingCart> updateQuantityOfProductOfShoppingCart(
-            @Valid @RequestBody UserShoppingCartRequest userShoppingCartRequest,
+            @Valid @PathVariable(required = false) int idProduct,
+            @Valid @PathVariable(required = false) String nameProduct,
+            @Valid @PathVariable(required = true) int productQuantity,
             @RequestHeader(value="${headers.id-user}") int idUser) {
         log.info(LogConstants.START_APPLICATION_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART,idUser);
-        ShoppingCart shoppingCart = shoppingService.updateQuantityOfProductOfShoppingCart(idUser,userShoppingCartRequest);
+        ShoppingCart shoppingCart = shoppingService.updateQuantityOfProductOfShoppingCart(
+                idUser,idProduct,nameProduct,productQuantity);
         log.info(LogConstants.FINISH_APPLICATION_UPDATE_QUANTITY_OF_PRODUCT_OF_SHOPPING_CART,idUser);
         return new ResponseEntity(shoppingCart, HttpStatus.OK);
+    }
+
+    /**
+     * GetListResTemplateResponse method.
+     * Method to consult a list of Rest template response.
+     * @return ResponseEntity<List<RestTemplateResponse>> list of Rest template response
+     */
+    @GetMapping(
+            path = "${controller.api-get-list-rest-template-response}",
+            produces = "application/json"
+    )
+    @ResponseBody
+    public ResponseEntity<List<RestTemplateResponse>> getListResTemplateResponse() {
+        List<RestTemplateResponse> restTemplateResponseList = restTemplateService.getListResTemplateResponse();
+        return new ResponseEntity(restTemplateResponseList, HttpStatus.OK);
     }
 
 

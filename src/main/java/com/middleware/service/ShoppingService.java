@@ -4,7 +4,9 @@ import com.middleware.model.DetailShoppingCart;
 import com.middleware.model.Request.DeleteProductOfShoppingCartRequest;
 import com.middleware.model.Request.UserShoppingCartRequest;
 import com.middleware.model.ShoppingCart;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 public interface ShoppingService {
@@ -23,5 +25,9 @@ public interface ShoppingService {
     ShoppingCart getShoppingCartUserById(int idUser);
 
     ShoppingCart updateQuantityOfProductOfShoppingCart(
-            int idUser, UserShoppingCartRequest userShoppingCartRequest);
+            int idUser,
+            int idProduct,
+            String nameProduct,
+            int productQuantity
+    );
 }

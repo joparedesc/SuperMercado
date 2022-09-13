@@ -5,9 +5,13 @@ controller:
   api-add-product-shopping-cart: add/product/shopping/cart
   api-get-shopping-cart-by-user: shopping/cart/byUser
   api-delete-product-shopping-cart: delete/product/shopping/cart
-  api-update-quantity-product-shopping-cart: update/quantity/product/shopping/cart
-  api-get-catalog-products-map-by-id: catalog/product/mapById
-  api-get-catalog-products-map-by-name: catalog/product/mapByName
+  api-update-quantity-product-shopping-cart: update/cart/{idProduct}/{nameProduct}/{productQuantity}
+  api-get-list-rest-template-response: get/list/resTemplate
+
+#Paths api external
+url-external:
+  base-path: https://jsonplaceholder.typicode.com
+  api-post: /posts
 
 #Valid headers apis
 headers:
@@ -18,6 +22,14 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+#Asyn config
+async-config:
+  core-pool-size: 2
+  max-pool-size: 2
+  queue-capacity: 100
+  thread-name: SaveProductThread
+  sleep-time: 8000
 
 #Catalog products
 product-catalog:

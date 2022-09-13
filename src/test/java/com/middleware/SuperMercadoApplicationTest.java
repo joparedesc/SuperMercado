@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.middleware.config.ProductCatalogConfig;
 import com.middleware.model.DetailShoppingCart;
 import com.middleware.model.Request.DeleteProductOfShoppingCartRequest;
-import com.middleware.model.Request.UserShoppingCartRequest;
 import com.middleware.model.Response.ProductsCatalogResponse;
 import com.middleware.model.ShoppingCart;
 import com.middleware.service.ProductService;
@@ -144,10 +143,9 @@ class SuperMercadoApplicationTest {
     void updatedProductWithQuantityGreaterThanZero(){
         Map<Integer, ShoppingCart>  shoppingCartMap=shoppingService.initialShoppingCart();
         int idUser=1;
-
-        UserShoppingCartRequest userShoppingCartRequest=
-                new UserShoppingCartRequest(15,"Leche",2);
-
+        int idProduct=15;
+        String nameProduct="Leche";
+        int productQuantity=2;
 
 
         Gson gson = new Gson();
@@ -155,7 +153,7 @@ class SuperMercadoApplicationTest {
         System.out.println("Shopping Cart initial: "+jsonShoppingCartInitial);
 
         ShoppingCart shoppingCart=shoppingService.updateQuantityOfProductOfShoppingCart(
-                idUser,userShoppingCartRequest
+                idUser,idProduct,nameProduct,productQuantity
         );
         String jsonShoppingCart =gson.toJson(shoppingCart);
         System.out.println("Shopping Cart: "+jsonShoppingCart);
